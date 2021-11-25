@@ -48,7 +48,7 @@ TEST_CASE("Same len", ""){
 TEST_CASE("Last elements", ""){
     std::stringstream input(
             "3 10\n"
-            "abc 1234567bac"
+            "abc ABCDEFGbac"
             );
     std::stringstream output;
     parseFile(input,output);
@@ -60,7 +60,7 @@ TEST_CASE("Last elements", ""){
 TEST_CASE("First elements", ""){
     std::stringstream input(
             "3 10\n"
-            "abc abc1234567"
+            "abc abcABCDEFG"
             );
     std::stringstream output;
     parseFile(input,output);
@@ -72,7 +72,7 @@ TEST_CASE("First elements", ""){
 TEST_CASE("Single len", ""){
     std::stringstream input(
             "1 10\n"
-            "a a123a4567a"
+            "a aABCaDEFGa"
             );
     std::stringstream output;
     parseFile(input,output);

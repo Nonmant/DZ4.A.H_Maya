@@ -5,54 +5,69 @@
 
 void parseFile(std::istream & input, std::ostream & output){
 
-    std::multiset<char> word;
+    std::map<char, unsigned long int> word, curWord;
+
+    for(char c = 'a'; c<='z'; ++c){
+        word[c] = 0;
+        curWord[c] = 0;
+    }
+    for(char c = 'A'; c<='Z'; ++c){
+        word[c] = 0;
+        curWord[c] = 0;
+    }
+    const long unsigned int goalCollisions = word.size();
+
+
     std::vector<char> sequence;
     size_t g, s;
     input >> g >> s;
 
-    std::copy_n(std::istream_iterator<char>(input),g,std::inserter(word,word.end()));
+    char c;
+    for(int i = 0; i<g; ++i){
+        input >> c;
+        ++word[c];
+    }
 
     sequence.resize(s);
     input.ignore();
     std::copy_n(std::istream_iterator<char>(input),s,sequence.begin());
 
-    std::multiset<char> curWord(sequence.begin(), sequence.begin()+(g-1));
-    unsigned int count = 0;
-    for(unsigned int i = 0; i<=s-g; ++i){
-
-        if(word.count(sequence[i+g-1])==0){
-            i = i+g;
-            if(i > s-g)
-                break;
-            curWord = std::multiset<char>(sequence.begin() + i, sequence.begin() + (i + g - 1));
-            --i;
-            continue;
-        }
-
-        curWord.insert(sequence[i+g-1]);
-
-        std::vector<char> difference;
-        std::set_difference(word.begin(), word.end(),
-                            curWord.begin(), curWord.end(),
-                            std::back_inserter(difference));
-
-        curWord.erase(curWord.find(sequence[i]));
-
-        if(difference.empty())
-            ++count;
-        else{
-            unsigned int skipSize = difference.size()-1;
-
-            if(skipSize+i >= s-g)
-                break;
-
-            for(unsigned int j = 1; j < skipSize; ++j){
-                curWord.erase(curWord.find(sequence[i+j]));
-                curWord.insert(sequence[i+j+g-1]);
-            }
-            if(skipSize > 0)
-                i+=skipSize-1;
-        }
+    for(int i = 0; i<g; ++i){
+        ++curWord[sequence[i]];
     }
+
+    long unsigned int collisions = 0;
+    for(const auto & ch : word){
+        if(curWord[ch.first] == ch.second)
+            ++collisions;
+    }
+
+    long unsigned int count = 0;
+    if(collisions == goalCollisions)
+        ++count;
+
+    char add, remove;
+    for(unsigned long i = 0; i<s-g; ++i){
+        remove = sequence[i];
+        add = sequence[i+g];
+
+        if(curWord[remove] == word[remove])
+            --collisions;
+        else if(curWord[remove] == word[remove]+1)
+            ++collisions;
+
+        --curWord[remove];
+
+        if(curWord[add] == word[add])
+            --collisions;
+        else if(curWord[add]+1 == word[add])
+            ++collisions;
+
+        ++curWord[add];
+
+        if(collisions == goalCollisions)
+            ++count;
+    }
+
     output << count;
 }
