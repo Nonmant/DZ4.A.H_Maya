@@ -1,4 +1,5 @@
 # H. Расшифровка письменности Майя
+https://contest.yandex.ru/contest/27665/problems/H/
 
 Ограничение времени\
 1 секунда\
